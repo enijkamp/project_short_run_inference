@@ -64,80 +64,83 @@
 <div class="content">
     <div id="abs">
         <h1>Learning Multi-layer Latent Variable Model via Variational Optimization of Short Run MCMC for Approximate Inference</h1>
-        <div class="authors"><a href="mailto:enijkamp@ucla.edu">Erik Nijkamp</a><sup>*</sup>, <a href="mailto:mkhill@ucla.edu">Mitch Hill</a><sup>*</sup>, <a href="mailto:hantian@ucla.edu">Tian Han</a>, <a href="mailto:sczhu@stat.ucla.edu">Song-Chun Zhu</a>, <a href="mailto:ywu@stat.ucla.edu">Ying Nian Wu</a></div>
+        <div class="authors"><a href="mailto:enijkamp@ucla.edu">Erik Nijkamp</a><sup>*</sup>, <a href="bopang@ucla.edu">Bo Pang</a><sup>*</sup>, <a href="mailto:than6@stevens.edu">Tian Han</a>, <a href="mailto:sczhu@stat.ucla.edu">Song-Chun Zhu</a>, <a href="mailto:ywu@stat.ucla.edu">Ying Nian Wu</a></div>
         <div class="inst">
             <sup>*</sup> Equal contributions<br>
             University of California, Los Angeles (UCLA), USA<br>
         </div>
         <h2>Abstract</h2>
-        <p>This study investigates the effects of Markov chain Monte Carlo (MCMC) sampling in unsupervised Maximum Likelihood (ML) learning. Our attention is restricted to the family of unnormalized probability densities for which the negative log density (or energy function) is a ConvNet. We find that many of the techniques used to stabilize training in previous studies are not necessary. ML learning with a ConvNet potential requires only a few hyper-parameters and no regularization. Using this minimal framework, we identify a variety of ML learning outcomes that depend solely on the implementation of MCMC sampling. On one hand, we show that it is easy to train an energy-based model which can sample realistic images with short-run Langevin. ML can be effective and stable even when MCMC samples have much higher energy than true steady-state samples throughout training. Based on this insight, we introduce an ML method with purely noise-initialized MCMC, high-quality short-run synthesis, and the same budget as ML with informative MCMC initialization such as CD or PCD. Unlike previous models, our energy model can obtain realistic high-diversity samples from a noise signal after training. On the other hand, ConvNet potentials learned with non-convergent MCMC do not have a valid steady-state and cannot be considered approximate unnormalized densities of the training data because long-run MCMC samples differ greatly from observed images. We show that it is much harder to train a ConvNet potential to learn a steady-state over realistic images. To our knowledge, long-run MCMC samples of all previous models lose the realism of short-run samples. With correct tuning of Langevin noise, we train the first ConvNet potentials for which long-run and steady-state MCMC samples are realistic images.</p>
+        <p>This paper studies the fundamental problem of learning deep generative models that consist of multiple layers of latent variables organized in top-down architectures. Such models have high expressivity and allow for learning hierarchical representations. Learning such a generative model requires inferring the latent variables for each training example based on the posterior distribution of these latent variables. The inference typically requires Markov chain Monte Caro (MCMC) that can be time consuming. In this paper, we propose to use noise initialized non-persistent short run MCMC, such as finite step Langevin dynamics initialized from the prior distribution of the latent variables, as an approximate inference engine, where the step size of the Langevin dynamics is variationally optimized by minimizing the Kullback-Leibler divergence between the distribution produced by the short run MCMC and the posterior distribution. Our experiments show that the proposed method outperforms variational auto-encoder (VAE) in terms of reconstruction error and synthesis quality. The advantage of the proposed method is that it is simple and automatic without the need to design an inference model.</p>
     </div>
     <hr>
     <h2>Paper</h2>
-    The publication can be obtained <a href="https://arxiv.org/abs/1903.12370">here</a>.
+    The publication can be obtained <a href="https://arxiv.org/abs/1912.01909">here</a>.
     <pre class="bib">
-@article{nijkamphill2019anatomy,
-  title={On the Anatomy of MCMC-Based Maximum Likelihood Learning of Energy-Based Models},
-  author={Nijkamp, Erik and Hill, Mitch and Han, Tian and Zhu, Song-Chun and Wu, Ying Nian},
-  journal={AAAI},
+@article{nijkamp2020inf,
+  title={Learning Multi-layer Latent Variable Model via Variational Optimization of Short Run MCMC for Approximate Inference},
+  author={Nijkamp, Erik and Pang, Bo and Han, Tian and Zhu, Song-Chun and Wu, Ying Nian},
+  journal={ECCV},
   year={2020}
 }
 </pre>
     <hr>
-    
-    <h2>Poster</h2>
-    <p>The poster can be obtained <a href="https://raw.githubusercontent.com/enijkamp/project_anatomy/master/ebm-anatomy-poster.pdf">here</a>.</p>
+
+    <h2>Contributions</h2>
+    <p>(1) We propose short run MCMC for approximate inference of latent variables in deep generative models.<br>
+(2) We provide a method to determine the optimal step size, or in general, hyper-parameters of the short run MCMC.<br>
+(3) We demonstrate learning of multi-layer latent variable models with high quality samples and reconstructions.</p>
     <hr>
     
+
     <h2>Code</h2>
-    <p>The code can be obtained <a href="https://github.com/point0bar1/ebm-anatomy">here</a>.</p>
+    <p>The code can be obtained <a href="https://github.com/enijkamp/short_run_inf">here</a>. (Coming soon)</p>
     <hr>
-    
-    <h2>Diagnosing MCMC-Based Maximum Likelihood</h2>
-    <p>This work is motivated by the observation that all prior works that learn energy-based models with a ConvNet potential exhibit unrealistic long-run MCMC samples, as shown in Figure 1. The oversaturated appearance of long-run MCMC samples leads to two important conclusions: 1) prior ConvNet potentials do not assign probability mass in realistic regions of the image space, and 2) short-run synthesis is successful even though MCMC sampling with informative initialization such as CD and PCD is highly non-convergent. </p>
-    <div class="figure">
-        <img src="./figure/oversaturated.png" width="500">
-        <p class="caption"><b>Figure 1:</b> Prior works that learn unnormalized densities with ConvNet potentials exhibit oversaturated long-run MCMC samples, indicating that the learned density is not valid. Left: <a href="https://arxiv.org/abs/1609.09408">Xie et al., 2016</a>, Middle: <a href="https://arxiv.org/abs/1711.08875">Lee et al., 2017</a>, Right: <a href="https://arxiv.org/abs/1903.08689">Du and Mordatch, 2019</a>.</p>
-    </div>
-    <p>Analysis of the MCMC-based ML learning process reveals two axes which govern each update of the model parameters. These axes are 1) the energy difference between data samples and MCMC samples (a negative difference indicates that data samples are more likely than MCMC samples, and a positive difference indicates the opposite) and 2) the convergence of MCMC samples with respect to the current model steady-state. All stable learning outcomes exhibit oscillation along the first axis, meaning that data samples and MCMC samples frequently exchange the role being more likely or less likely. All prior implementations fall exclusively on the non-convergent side of the second axis throughout training, despite the fact that informative initialization methods such as PCD are used with the justification that these methods facilitate convergence. Our main experimental contributions are: 1) the first non-convergent learning method with purely noise-initialized MCMC, and 2) the first convergent ConvNet potentials with realistic long-run MCMC samples. Our diagnosis and contributions are summarized in Figure 2.</p>
-    <div class="figure">
-        <img src="./figure/idea6.png" width="600">
-        <p class="caption"><b>Figure 2:</b> Two axes that govern each update of MCMC-based ML learning, and our contributions along the axes.</p>
-    </div>
     
     <h2>Experiments</h2>
-    
-    <h3>Experiment 1: Learning Outcomes for 2D Toy Data</h3>
-    <p>We illustrate the distinction between convergent and non-convergent outcomes for 2D densities in Figure 3. The short-run MCMC densities used in training (obtained via kernel density estimation) closely match the ground truth for both convergent and non-convergent outcomes. However, the actual energy function learned by the non-convergent model is sharply concentrated and inaccurrate, while the energy function from convergent learning closely matches the ground truth.</p>
+    <h3>Experiment 1: Synthesis</h3>
+    <p>We contrast the synthesis of a generator model \(g_\theta(z)\) with \(L=5\) latent layers learned by Ladder-VAE and our proposed short run MCMC infernece method in Figure 1. Despite its simplicity, short run MCMC is competitive with elaborate means of inference in VAE models and flow-based models, such as Glow.</p>
     <div class="figure">
-        <img src="./figure/toy_experiment.png" width="600">
-        <p class="caption"><b>Figure 3:</b> Illustration of non-convergent and convergent learning outcomes for 2D toy data.</p>
+        <img src="./figure/synthesis/celeba64_vae.png" width="300" style="margin:10px">
+        <img src="./figure/synthesis/celeba64.png" width="300" style="margin:10px">
+        <p class="caption"><b>Figure 1:</b> Generated samples for top-down models \(g_\theta(z)\) learned by Ladder-VAE (left) and our proposed means of approximate inference by short run MCMC (right) on CelebA \((64 \times 64)\).</p>
     </div>
 
-    <h3>Experiment 2: Learning Outcomes for Image Data</h3>
-    <p>The same distinction between non-convergent and convergent learning can be observed for energy functions of high-dimensional image data, as shown in Figure 4. The short-run MCMC samples of both non-convergent and convergent models closely resemble the training data. However, long-run MCMC samples of the non-convergent model are oversaturated, while long-run samples of a convergent model are realistic and similar to short-run samples. Convergent results from two different kinds of networks are presented.</p>
+    <h3>Experiment 2: Reconstruction</h3>
+    <p>We evaluate the accuracy of the learned short run MCMC inference dynamics \(q_{s, \theta_t}(z|x_i)\) by reconstructing test images. In contrast to traditional MCMC posterior sampling with persistent chains, short run inference with small \(K\) allows not only for efficient learning on training examples, but also the same dynamics can be recruited for testing examples. Figure 2 compares the reconstructions of learned generators with \(L=5\) layers by Ladder-VAE and short run inference on CelebA \((64\times64\times3)\). The fidelity of reconstructions by short run MCMC inference appears qualitatively improved over VAE</p>
     <div class="figure">
-        <img src="./figure/conv_ml.png" width="600">
-        <p class="caption"><b>Figure 4:</b> Illustration of non-convergent and convergent learning outcomes for the Oxford Flowers 102 dataset.</p>
+        <img src="./figure/reconstruction/recon64.png" width="400">
+        <p class="caption"><b>Figure 2:</b> Comparison of reconstructions between Ladder-VAE samples and our method on CelebA \((64\times64\times3)\) with \(L=5\). Top: original test images. Middle: reconstructions from VAE. Bottom: reconstructions by short run inference.</p>
     </div>
     
-     <h3>Experiment 3: Non-Convergent Learning with Noise-Initialized MCMC</h3>
-    <p>We show that informative initialization of MCMC samples (i.e. use of methods such as CD and PCD) is not essential for stable and efficient non-convergent learning. We implement ML learning with purely noise-initialized MCMC throughout training to learn a non-invertible flow capable of generating realistic images from a latent noise signal. Unlike models trained with persistent chains, models trained with purely noise-initialized MCMC can easily generated new samples after learning has concluded. Results for the Oxford Flowers 102 dataset are shown in Figure 5. See our companion paper <a href="https://arxiv.org/abs/1904.09770">Nijkamp et al., 2019</a> for a thorough investigation of non-convergent noise-initialized learning.</p>
+    <h3>Experiment 3: Inpainting</h3>
+    <p>Our method can "inpaint" occluded image regions. To recover the occluded pixels, the only required modification involves the computation of \(\|x - g_\theta(z)\|^2/\sigma^2\). For a fully observed image, the term is computed by the summation over all pixels. For partially observed images, we only compute the summation over the observed pixels. Figure 3 depicts test images taken from the CelebA dataset for which a mask randomly occludes pixels in various patterns.</p>
     <div class="figure">
-        <img src="./figure/noise_init.png" width="500">
-        <p class="caption"><b>Figure 5:</b> Generation of images using 100 MCMC steps from uniform noise with a non-convergent model trained using purely noise-initialized MCMC.</p>
+        <img src="./figure/inpaint/inpaint.png" width="400">
+        <p class="caption"><b>Figure 3:</b> Inpainting on CelebA \((64\times64\times3)\) with \(L=5\) for varying occlusion masks. Top: original test images. Middle: occluded images. Bottom: inpainted test images by short run MCMC inference.</p>
     </div>
     
-    <h3>Experiment 4: Mapping the Energy Landscape of a Convergent Energy</h3>
-    <p>The metastable structures of convergent energy functions correspond to image concepts that are recognizable to humans. We apply the method used in <a href="https://arxiv.org/abs/1803.01043">Hill et al., 2018</a> to map the macroscopic non-convex structures of a convergent energy trained on the Oxford Flowers 102 dataset. The large-scale energy basins represent meaningful clusters among flower images, as shown in Figure 6.</p>
+    <h3>Experiment 4: Hierarchical representation</h3>
+    <p>Multi-layer latent variable models not only demonstrate improved expressiveness over single-layer ones but also allow for learning the hierarchical structure. It can be argued that an alternative parameterization of the multi-layer generator promotes disentangled hierarchical features. We train a three-layer model with this parameterization using short run inference on SVHN. As shown in Figure 4, the three-layer latent variables capture disentangled representations, which are background color, digit identity, general structure from bottom to top layer.</p>
     <div class="figure">
-        <img src="./figure/tree.png" width="750">
-        <p class="caption"><b>Figure 6:</b> Metastable structures of a convergent energy function trained on the Oxford Flowers 102 dataset.</p>
+        <img src="./figure/disentanglement/l1.png" width="200">
+        <img src="./figure/disentanglement/l2.png" width="200">
+        <img src="./figure/disentanglement/l3.png" width="200">
+        <p class="caption"><b>Figure 4:</b> Generated samples from a three-layer generator where each sub-figure corresponds to samples drawn when fixing the latent variables \(z\) of all layers except for one. (left) The bottom layer represents background color. (center) The second layer represents digit identity. (right) The top layer represents general structure.</p>
     </div>
     
+    <h3>Experiment 5: Variational optimization of step size</h3>
+    <p>The step size \(s\) of short run MCMC may be optimized such that \(q_s(z)\) best approximates the posterior \(p_\theta(z|x)\). That is, we can optimize the step size \(s\) by minimizing \(KL(q_s(z) \| p_\theta(z|x))\) via a grid search or gradient descent. Then, we evaluate the eigenvalues of \(d F(z_0, \epsilon)/d z_0\). As both steps are computed in a differentiable manner, we may compute the gradient with respect to \(s\).
+
+Figure 5 depict the optimal step size \(s\) over learning iterations \(t\) determined by grid-search and gradient descent.</p>
+    <div class="figure">
+        <img src="./figure/step/105_1_step_size_75_train_abp_mnist_32_hierarchical_ladder_one_celeba_1_extra_kl_grid_small_correct_plot_2_ss/plot.png" width="200">
+        <img src="./figure/step/106_1_step_size_75_train_abp_mnist_32_hierarchical_ladder_one_celeba_1_extra_kl_gd_small_correct_plot_2_ss/plot.png" width="200">
+        <img src="./figure/step/105_1_step_size_75_train_abp_mnist_32_hierarchical_ladder_one_celeba_1_extra_kl_grid_small_correct_plot_4_kls_4_lines/plot.png" width="200">
+        <p class="caption"><b>Figure 5:</b> (left) and (center) step size \(s\) over epochs \(T\) for three individual runs with varying random seed. (right) \(E_{q_s(z)}[\log q_s(z) -\log p_\theta(x, z)]\) for step sizes \(s\) over epochs \(T\).</p>
+    </div>
     <hr>
     <h2>Acknowledgements</h2>
-    <p>The work is supported by DARPA XAI project N66001-17-2-4029; ARO project W911NF1810296; and ONR MURI project N00014-16-1-2007; and XSEDE grant ASC170063. We thank Prafulla Dhariwal and Anirudh Goyal for helpful discussions.</p>
+    <p>The work is supported by NSF DMS-2015577, DARPA XAI N66001-17-2-4029, ARO W911NF1810296, ONR MURI N00014-16-1-2007, and XSEDE grant ASC170063. We thank NVIDIA for the donation of Titan V GPUs. We thank Eric Fischer for the assistance with experiments.</p>
 </div>
 </body>
 </html>
